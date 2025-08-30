@@ -1,0 +1,290 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>San Image Compressor — Ultra (final)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-dark: linear-gradient(135deg,#0f1724 0%, #07102a 100%);
+    --bg-light: linear-gradient(135deg,#f8fafc 0%, #eef2ff 100%);--card-dark: rgba(255,255,255,0.03);
+--card-light: rgba(2,6,23,0.03);
+
+--muted-dark: #d1d5db;
+--muted-light: #374151;
+
+--text-dark: #e6eef8;
+--text-light: #061428;
+
+--accent1: linear-gradient(90deg,#7c3aed,#06b6d4);
+--accent2: linear-gradient(90deg,#06b6d4,#10b981);
+
+--card-shadow-dark: 0 10px 30px rgba(2,6,23,0.6);
+--card-shadow-light: 0 10px 30px rgba(12,20,60,0.06);
+
+}
+ 
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;box-sizing:border-box} body{min-height:100vh;display:flex;flex-direction:column;background:var(--bg-dark);color:var(--text-dark);transition:background .25s,color .25s} body.light{background:var(--bg-light);color:var(--text-light)}
+
+/* Header / Navbar - fixed now */ .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:rgba(255,255,255,0.03);border-radius:12px;box-shadow:var(--card-shadow-dark);position:fixed;top:14px;left:50%;transform:translateX(-50%);width:calc(100% - 36px);max-width:980px;z-index:999} body.light .navbar{background:rgba(255,255,255,0.98);box-shadow:var(--card-shadow-light)}
+
+.brand{display:flex;gap:12px;align-items:center} .logo{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white;font-weight:700;font-size:14px} .brand h1{margin:0;font-size:16px;color:inherit} .brand p{margin:0;font-size:12px;color:var(--muted-dark)} body.light .brand p{color:var(--muted-light)}
+
+.nav-actions{display:flex;gap:10px;align-items:center} .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px;color:var(--text-dark);cursor:pointer} body.light .btn-ghost{border:1px solid rgba(2,6,23,0.06);color:var(--text-light)}
+
+/* Theme switch */ .theme-switch{width:56px;height:30px;background:linear-gradient(90deg,#e6eef8,#cfeefb);border-radius:999px;display:flex;align-items:center;padding:4px;gap:4px;cursor:pointer} .theme-switch.dark{background:linear-gradient(90deg,#0f1724,#07102a)} .switch-knob{width:22px;height:22px;border-radius:999px;background:white;box-shadow:0 6px 18px rgba(2,6,23,0.3);transform:translateX(0);transition:transform .18s} .theme-switch.on .switch-knob{transform:translateX(26px)}
+
+/* Layout - add top padding so fixed navbar doesn't cover content */ main.container{width:980px;max-width:98%;margin:28px auto 80px;display:grid;grid-template-columns:420px 1fr;gap:22px;align-items:start;padding-top:72px} body.light .card{background:linear-gradient(180deg,var(--card-light),rgba(2,6,23,0.01));box-shadow:var(--card-shadow-light);border:1px solid rgba(2,6,23,0.04)}
+
+.card{border-radius:16px;padding:18px;background:linear-gradient(180deg,var(--card-dark),rgba(255,255,255,0.02));box-shadow:var(--card-shadow-dark);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.04)} .left h2{margin:0;font-size:20px} .hero{padding:18px;border-radius:12px;margin-bottom:12px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;flex-direction:column;gap:6px} .hero h1{margin:0;font-size:22px} .hero p{margin:0;color:var(--muted-dark)} body.light .hero p{color:var(--muted-light)}
+
+.drop{border:2px dashed rgba(255,255,255,0.06);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .12s;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;position:relative;overflow:hidden} .drop.hover{border-color:rgba(99,102,241,0.6);transform:translateY(-4px)} .drop input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0}
+
+.file-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px} .pill{background:linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));padding:6px 10px;border-radius:999px;font-size:13px;color:var(--text-dark)} body.light .pill{background:linear-gradient(90deg, rgba(2,6,23,0.02), rgba(2,6,23,0.01));color:var(--text-light)}
+
+.controls{display:flex;gap:10px;margin-top:12px} select,input[type=number]{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:10px;color:inherit} body.light select,input[type=number]{border:1px solid rgba(2,6,23,0.06)}
+
+.presets{display:flex;gap:8px;margin-top:12px} .preset{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));cursor:pointer;font-weight:600} .preset.active{background:var(--accent1);color:white;box-shadow:0 6px 18px rgba(124,58,237,0.18)}
+
+.progress-wrap{margin-top:14px} .progress-bar{height:12px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden} .progress{height:100%;width:0%;background:var(--accent2);transition:width .35s} .status{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--muted-dark)}
+
+.preview{border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.02));padding:12px;margin-top:14px;display:flex;gap:12px;align-items:center} body.light .preview{background:linear-gradient(180deg, #ffffff, #fbfdff)} .preview img{max-width:120px;border-radius:8px;box-shadow:0 6px 18px rgba(2,6,23,0.6)} .preview .info{font-size:13px;color:var(--muted-dark)}
+
+.right{display:flex;flex-direction:column;gap:12px} .card-right{padding:16px;border-radius:12px} .big-actions{display:flex;gap:10px;margin-top:12px} .btn{padding:10px 14px;border-radius:12px;border:none;cursor:pointer;font-weight:700} .btn.primary{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white} .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted-dark)} body.light .btn.ghost{border:1px solid rgba(2,6,23,0.06);color:var(--muted-light)}
+
+.note{font-size:13px;color:var(--muted-dark);margin-top:8px} body.light .note{color:var(--muted-light)}
+
+footer{grid-column:1/-1;text-align:center;margin-top:18px;color:rgba(255,255,255,0.45);font-size:13px} body.light footer{color:rgba(6,16,36,0.6)}
+
+@media (max-width:980px){main.container{grid-template-columns:1fr;padding-top:96px} .hero h1{font-size:20px}} </style>
+
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">
+      <div class="logo">SAN</div>
+      <div>
+        <h1>San Image Compressor</h1>
+        <p>Ultra — Premium Image Compressor</p>
+      </div>
+    </div><div class="nav-actions">
+  <button id="visibleUploadNav" class="btn-ghost" title="Upload image">Upload</button>
+  <div id="themeToggleWrap" class="theme-switch dark" role="button" aria-pressed="false" title="Toggle theme">
+    <div class="switch-knob"></div>
+  </div>
+</div>
+
+  </header>  <main class="container">
+    <section class="card left">
+      <div class="hero">
+        <h1>San Image Compressor</h1>
+        <p>Smarter compression. Choose a target size or WebP for much smaller files. Quality-first, then downscale.</p>
+      </div><div id="drop" class="drop" tabindex="0" aria-label="Drop or click to choose image">
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v10" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 7l4-4 4 4" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong id="dropLabel">Drag & drop an image or click to choose</strong>
+    <span id="supportedText" style="font-size:13px;color:var(--muted-dark)">Supported: JPG, PNG, WebP. Max 20 MB</span>
+    <input id="fileInput" type="file" accept="image/*" />
+  </div>
+
+  <div class="file-meta">
+    <div class="pill" id="fileName">No file</div>
+    <div style="display:flex;gap:8px">
+      <div class="pill" id="origSize">—</div>
+      <div class="pill" id="origDim">—</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <select id="formatSelect" title="Format">
+      <option value="image/jpeg">JPEG</option>
+      <option value="image/webp">WebP (smaller)</option>
+    </select>
+    <select id="presetSelect" title="Preset">
+      <option value="50">50 KB</option>
+      <option value="100" selected>100 KB</option>
+      <option value="200">200 KB</option>
+      <option value="custom">Custom</option>
+    </select>
+    <input id="customKB" type="number" placeholder="KB" style="display:none;width:80px" />
+  </div>
+
+  <div class="presets" role="list">
+    <div class="preset" data-val="200">200 KB</div>
+    <div class="preset active" data-val="100">100 KB</div>
+    <div class="preset" data-val="50">50 KB</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div id="progress" class="progress"></div></div>
+    <div class="status"><div id="statusText">Idle</div><div id="percent">0%</div></div>
+  </div>
+
+  <div id="previewArea" class="preview" style="display:none">
+    <img id="thumb" src="" alt="preview">
+    <div class="info">
+      <div id="newSize">—</div>
+      <div id="newDim" style="margin-top:6px;color:var(--muted-dark)"></div>
+      <div id="qualityNote" style="margin-top:8px;color:var(--muted-dark);font-size:13px"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:12px">
+    <button id="downloadBtn" class="btn primary" style="display:none">⬇ Download</button>
+    <button id="saveOrigBtn" class="btn ghost" style="display:none">Download Original</button>
+  </div>
+
+  <div class="note">Tip: WebP typically gives much smaller files than JPEG. Extremely small targets like 5KB may not be achievable without heavy quality loss or extreme downscaling.</div>
+</section>
+
+<aside class="right">
+  <div class="card card-right">
+    <h3>Advanced options</h3>
+    <div style="margin-top:8px">
+      <label style="font-size:13px;color:var(--muted-dark)">Max downscale (min dimension)</label>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <input id="minDim" type="number" value="80" style="width:110px"> <div style="color:var(--muted-dark);font-size:13px">px</div>
+      </div>
+      <div style="margin-top:12px;font-size:13px;color:var(--muted-dark)">If the target can't be reached by quality changes, the tool will progressively downscale image up to the min dimension to reach target.</div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label style="font-size:13px;color:var(--muted-dark)">When target can't be reached</label>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button id="optKeepBest" class="btn ghost" style="flex:1">Keep best (smallest)</button>
+        <button id="optKeepOriginal" class="btn ghost" style="flex:1">Keep original</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-right">
+    <h3>Why results may be larger than target</h3>
+    <ul style="color:var(--muted-dark);font-size:13px">
+      <li>Very detailed or large images can't reach tiny sizes without heavy loss.</li>
+      <li>PNG -> JPEG can sometimes increase size; try WebP for better compression.</li>
+      <li>There is a minimum size determined by dimensions & visual complexity.</li>
+    </ul>
+  </div>
+</aside>
+
+<footer>Made with ❤️ — Select WebP + downscale for best results</footer>
+
+  </main><script>
+// Refs
+const fileInput = document.getElementById('fileInput');
+const drop = document.getElementById('drop');
+const visibleUploadNav = document.getElementById('visibleUploadNav');
+const themeToggleWrap = document.getElementById('themeToggleWrap');
+const dropLabel = document.getElementById('dropLabel');
+
+const fileName = document.getElementById('fileName');
+const origSize = document.getElementById('origSize');
+const origDim = document.getElementById('origDim');
+const progress = document.getElementById('progress');
+const percent = document.getElementById('percent');
+const statusText = document.getElementById('statusText');
+const previewArea = document.getElementById('previewArea');
+const thumb = document.getElementById('thumb');
+const newSize = document.getElementById('newSize');
+const newDim = document.getElementById('newDim');
+const qualityNote = document.getElementById('qualityNote');
+const downloadBtn = document.getElementById('downloadBtn');
+const saveOrigBtn = document.getElementById('saveOrigBtn');
+const presetEls = document.querySelectorAll('.preset');
+const presetSelect = document.getElementById('presetSelect');
+const customKB = document.getElementById('customKB');
+const formatSelect = document.getElementById('formatSelect');
+const minDimInput = document.getElementById('minDim');
+
+let currentFile = null;let lastObjectUrl = null;let lastCompressedBlob = null;let preferOriginalIfFail = false;const MAX_BYTES = 20 * 1024 * 1024;
+
+function revokeLastURL(){ if(lastObjectUrl){ try{ URL.revokeObjectURL(lastObjectUrl); }catch(e){} lastObjectUrl = null; } }
+function humanKB(bytes){ return (bytes/1024).toFixed(1) + ' KB'; }
+function setStatus(text,p=null){ statusText.textContent = text; if(typeof p === 'number'){ progress.style.width = p + '%'; percent.textContent = Math.round(p) + '%'; }}
+
+// Theme
+function applyTheme(){ const t = localStorage.getItem('san_theme') || 'dark'; document.body.classList.toggle('light', t === 'light'); themeToggleWrap.classList.toggle('on', t === 'light'); themeToggleWrap.classList.toggle('dark', t !== 'light'); themeToggleWrap.setAttribute('aria-pressed', t === 'light'); }
+function toggleTheme(){ const next = (localStorage.getItem('san_theme') === 'light') ? 'dark' : 'light'; localStorage.setItem('san_theme', next); applyTheme(); }
+themeToggleWrap.addEventListener('click', toggleTheme); applyTheme();
+
+// Ensure input change fires if same file reselected: clear value on pointerdown before open
+visibleUploadNav.addEventListener('pointerdown', ()=>{ try{ fileInput.value = ''; }catch(e){} });
+visibleUploadNav.addEventListener('click', ()=> fileInput.click());
+
+// Drop pointerdown clears value too
+drop.addEventListener('pointerdown', ()=>{ try{ fileInput.value = ''; }catch(e){} });
+
+// Drag & drop
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.add('hover'); e.dataTransfer.dropEffect = 'copy'; }));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,(e)=>{ e.preventDefault(); e.stopPropagation(); drop.classList.remove('hover'); }));
+
+drop.addEventListener('drop', e=>{ if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+
+// Click to open file input (clear previous selection first so change fires even if same file chosen)
+drop.addEventListener('click', ()=>{ try{ fileInput.value = ''; }catch(e){} fileInput.click(); });
+
+// Listen to both 'input' and 'change' to support all browsers
+fileInput.addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]) handleFile(e.target.files[0]); });
+fileInput.addEventListener('input', (e)=>{ if(e.target.files && e.target.files[0]) handleFile(e.target.files[0]); });
+
+// Presets
+presetEls.forEach(el=>el.addEventListener('click', ()=>{ presetEls.forEach(x=>x.classList.remove('active')); el.classList.add('active'); presetSelect.value = el.dataset.val; customKB.style.display = 'none'; }));
+presetSelect.addEventListener('change', ()=>{ customKB.style.display = presetSelect.value === 'custom' ? 'block' : 'none'; presetEls.forEach(el=>el.classList.toggle('active', el.dataset.val === presetSelect.value)); });
+
+document.getElementById('optKeepBest').addEventListener('click', ()=>{ preferOriginalIfFail = false; alert('Will keep best (smallest) result when target is unreachable.'); });
+document.getElementById('optKeepOriginal').addEventListener('click', ()=>{ preferOriginalIfFail = true; alert('Will keep original when target is unreachable.'); });
+
+saveOrigBtn.addEventListener('click', ()=>{ if(!currentFile) return; const a = document.createElement('a'); const url = URL.createObjectURL(currentFile); a.href = url; a.download = 'original_' + (currentFile.name || 'image'); a.click(); setTimeout(()=>URL.revokeObjectURL(url), 5000); });
+
+// Main handler
+async function handleFile(file){
+  // prevent double-handling when multiple events accidentally fire
+  if(!file || (currentFile && file.name === currentFile.name && file.size === currentFile.size && statusText.textContent === 'Compressing...')) return;
+
+  resetUI();
+  if(!file || !file.type.startsWith('image')){ alert('Please choose an image file.'); return; }
+  if(file.size > MAX_BYTES){ alert('File too large. Max 20 MB.'); return; }
+
+  currentFile = file; fileName.textContent = file.name; origSize.textContent = humanKB(file.size);
+
+  // read dimensions
+  let imgBitmap=null, origW=null, origH=null;
+  try{
+    if(window.createImageBitmap){ imgBitmap = await createImageBitmap(file); origW = imgBitmap.width; origH = imgBitmap.height; }
+    else { const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl); origW = img.naturalWidth; origH = img.naturalHeight; const c = document.createElement('canvas'); c.width=origW; c.height=origH; const ctx=c.getContext('2d'); ctx.drawImage(img,0,0); imgBitmap = c; }
+    origDim.textContent = (origW && origH) ? (origW + '×' + origH) : '—';
+  }catch(e){ origDim.textContent='—'; console.warn('Could not read image dimensions', e); }
+
+  const targetKB = getTargetKB(); const format = formatSelect.value; setStatus('Compressing...',3);
+  try{
+    const result = await compressImageToTarget(file, targetKB, format, (p)=>{ progress.style.width = p + '%'; percent.textContent = Math.round(p) + '%'; });
+    progress.style.width='100%'; percent.textContent='100%';
+    if(result.accepted){ lastCompressedBlob = result.blob; showResult(result.blob, result.width || origW, result.height || origH, result.sizeBytes, result.note); }
+    else{ if(preferOriginalIfFail){ lastCompressedBlob = currentFile; showResult(currentFile, origW, origH, currentFile.size, 'Target not reachable — kept original'); } else{ lastCompressedBlob = result.blob; showResult(result.blob, result.width || origW, result.height || origH, result.sizeBytes, 'Closest achievable result shown'); } }
+  }catch(err){ setStatus('Error: ' + (err && err.message ? err.message : String(err)),0); console.error(err); }
+  finally{ // clear input so choosing same file again will fire change next time
+    try{ fileInput.value = ''; }catch(e){}
+  }
+}
+
+function resetUI(){ progress.style.width='0%'; percent.textContent='0%'; statusText.textContent='Idle'; previewArea.style.display='none'; downloadBtn.style.display='none'; saveOrigBtn.style.display='none'; revokeLastURL(); }
+
+function showResult(blob,w,h,sizeBytes,note){ previewArea.style.display='flex'; revokeLastURL(); lastObjectUrl = URL.createObjectURL(blob); thumb.src = lastObjectUrl; newSize.textContent = 'Compressed: ' + humanKB(sizeBytes); newDim.textContent = (w ? (w + '×' + h) : ''); qualityNote.textContent = note || ''; statusText.textContent = 'Done'; downloadBtn.style.display = 'inline-block'; saveOrigBtn.style.display = 'inline-block'; downloadBtn.onclick = ()=>{ if(!lastObjectUrl) return; const a=document.createElement('a'); a.href = lastObjectUrl; const ext = (blob && blob.type) ? blob.type.split('/').pop().split('+')[0] : (formatSelect.value.includes('webp') ? 'webp' : 'jpg'); a.download = 'compressed.' + ext; a.click(); }; }
+
+function fileToDataURL(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+function loadImage(dataUrl){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=dataUrl; }); }
+function getTargetKB(){ let v = presetSelect.value; if(v === 'custom') v = parseInt(customKB.value) || 100; return Math.max(5, parseInt(v)); }
+
+// Compression algorithm (unchanged logic)
+async function compressImageToTarget(file,targetKB,mimeType,onProgress){ const targetBytes = targetKB * 1024; const origSize = file.size; if(origSize <= targetBytes){ onProgress?.(100); try{ const bm = window.createImageBitmap ? await createImageBitmap(file) : null; return {accepted:true, blob:file, sizeBytes:origSize, width: bm?bm.width:null, height: bm?bm.height:null, note:'Original already smaller than target'}; }catch(e){ return {accepted:true, blob:file, sizeBytes:origSize, width:null, height:null, note:'Original already smaller than target'}; } }
+  let imgBitmap=null, origW=null, origH=null; try{ if(window.createImageBitmap){ imgBitmap = await createImageBitmap(file); origW = imgBitmap.width; origH = imgBitmap.height; } else { const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl); origW=img.naturalWidth; origH=img.naturalHeight; const c=document.createElement('canvas'); c.width=origW; c.height=origH; const ctx=c.getContext('2d'); ctx.drawImage(img,0,0); imgBitmap=c; } }catch(e){ throw new Error('Image decode failed'); }
+  const maxDimension = Math.max(origW,origH); let minDim = parseInt(minDimInput.value) || 80; minDim = Math.max(16,minDim); const supportsOffscreen = (typeof OffscreenCanvas !== 'undefined') && typeof OffscreenCanvas.prototype.convertToBlob === 'function'; function makeCanvas(w,h){ if(supportsOffscreen){ try{return new OffscreenCanvas(w,h);}catch(e){} } const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+  async function toBlobAtQuality(w,h,q){ const c=makeCanvas(w,h); const ctx=c.getContext('2d'); if(!ctx) throw new Error('Canvas 2D not available'); try{ ctx.clearRect(0,0,w,h); ctx.drawImage(imgBitmap,0,0,w,h);}catch(e){ const dataUrl = await fileToDataURL(file); const img = await loadImage(dataUrl); ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);} if(typeof c.convertToBlob==='function'){ return await c.convertToBlob({type:mimeType,quality:q}); } else { return await new Promise(res=>c.toBlob(res,mimeType,q)); } }
+  let bestBlob=null, bestSize=Infinity, bestW=origW, bestH=origH; let scale=1; const minScale = Math.max(minDim / maxDimension, 0.05);
+  for(let scaleStep=0; scaleStep<12; scaleStep++){ const w=Math.max(Math.round(origW*scale),1); const h=Math.max(Math.round(origH*scale),1); let low=0.05, high=0.95; let found=false; for(let it=0; it<14; it++){ const q=(low+high)/2; const progressEstimate = Math.min(98, Math.round(((scaleStep/12)*60)+((it/14)*40))); onProgress?.(progressEstimate); const out = await toBlobAtQuality(w,h,q); const size = out.size; if(size < bestSize){ bestSize = size; bestBlob = out; bestW = w; bestH = h; } if(size <= targetBytes){ found = true; low = q; } else { high = q; } if((high - low) < 0.01) break; } if(found){ return {accepted:true, blob:bestBlob, sizeBytes:bestSize, width:bestW, height:bestH, note:'Target reached'}; } if(scale <= minScale) break; scale *= 0.8; if(scale < minScale) scale = minScale; }
+  if(bestBlob){ return {accepted:false, blob:bestBlob, sizeBytes:bestSize, width:bestW, height:bestH, note:'Could not reach target — closest (smallest) generated'}; }
+  return {accepted:false, blob:file, sizeBytes:file.size, width:origW, height:origH, note:'Could not compress further — returning original'}; }
+
+</script></body>
+</html>
